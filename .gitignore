@@ -1,0 +1,44 @@
+# =========================
+# Python / venv
+# =========================
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+
+# Bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =========================
+# PyCharm
+# =========================
+.idea/
+*.iml
+*.iws
+
+# =========================
+# VS Code (if used)
+# =========================
+.vscode/
+
+# =========================
+# Ubuntu / Linux specific
+# =========================
+*~
+*.swp
+.DS_Store   # macOS, harmless on Ubuntu
