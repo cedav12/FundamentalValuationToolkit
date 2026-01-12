@@ -1,6 +1,7 @@
 import argparse
 from data.connector.price import YahooPriceConnector
 from data.connector.fundamental import YahooFundamentalsConnector
+from analytics.price_analytics import PriceAnalytics
 
 parser = argparse.ArgumentParser()
 
@@ -13,6 +14,9 @@ def main(args: argparse.Namespace):
         print(ticker)
         prices = price_connector.fetch(ticker)
         fundamentals = fundamental_connector.fetch(ticker)
+        analytics = PriceAnalytics(prices)
+        print(analytics.summary())
+
 
 if __name__ == "__main__":
     # Parse arguments
