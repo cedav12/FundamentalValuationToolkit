@@ -1,14 +1,47 @@
 import pandas as pd
 import numpy as np
 
-class FundementalProcessor:  # Raw financial statement conversion to econ. metrics using the McKinsey Valuation framework (Valuation - measuring and managing the value of companies 8th ed.)
-    def __init__(self, tax_rate=0.21): # 21% - https://en.wikipedia.org/wiki/Corporate_tax_in_the_United_States
-        self.tax_rate = tax_rate
+from data.models.fundamental_data import FundamentalData
 
-    # Processes financial statements
-    def process_metrics(self, data_dict: dict[str, pd.DataFrame]) -> pd.DataFrame:
+
+class FundamentalProcessor:  # Raw financial statement conversion to econ. metrics using the McKinsey Valuation framework (Valuation - measuring and managing the value of companies 8th ed.)
+    def __init__(self, data: FundamentalData, tax_rate: float = 0.21): # 21% - https://en.wikipedia.org/wiki/Corporate_tax_in_the_United_States
+        """
+       Parameters
+       ----------
+       data : FundamentalData
+           Data containing info about instrument and potentially financial statements
+       tax_rate : float, optional
+           Used corporate tax_rate
+       """
+        self._data = data
+        self._tax_rate = tax_rate
+        self._output: pd.DataFrame | None = None
+
+    def get_metrics(self) -> pd.DataFrame | None:
+        """
+        Run FundamentalProcessor.
+        Returns metrics DataFrame if successful, else None.
+        """
+        if self._data.quote_type != "EQUITY":
+            print(f"{self._data.ticker}: QuoteType={self._data.quote_type} Not Supported."
+                  f" FundamentalProcessor only supports EQUITIES.")
+            return None
+
+        if self._output is not None:
+            return self._output.copy()
+
+        try:
+            self._output = self._process_metrics()
+            return self._output.copy()
+        except Exception as e:
+            print(e)
+            return None
+        
+    # Processes financial statements  (Private method)
+    def _process_metrics(self) -> pd.DataFrame:
         dfs = []
-        for key, df in data_dict.items():
+        for key, df in self._data.statements.items():
             if not df.empty:
                 dfs.append(df.T)
     
