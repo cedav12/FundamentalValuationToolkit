@@ -10,9 +10,22 @@ def main(args: argparse.Namespace):
     price_connector = YahooPriceConnector()
     fundamental_connector = YahooFundamentalsConnector()
     for ticker in args.tickers:
+        """
         print(ticker)
         prices = price_connector.fetch(ticker)
         fundamentals = fundamental_connector.fetch(ticker)
+        """
+        print("Analyzing {ticker}...")
+
+        fundementals = fundamental_connector.fetch(ticker)
+
+        from analytics.ec_metric_processor import FundementalProcessor
+        processor = FundementalProcessor()
+        metrics = processor.process_metrics(fundementals)
+
+        print(f"\n--- Key Metrics for {ticker} (Last 5 years) ---")
+        print(metrics[["Revenue", "NOPAT", "ROIC", "FCF"]].tail(5))
+
 
 if __name__ == "__main__":
     # Parse arguments
