@@ -38,7 +38,7 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
             print(e)
             return None
 
-    def get_latest_data(self) -> dict
+    def get_latest_data(self) -> dict:
         if self._output is None:
             self.get_metrics()
 
