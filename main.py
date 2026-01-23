@@ -50,7 +50,7 @@ def main(args: argparse.Namespace):
         try:
             prices = price_connector.fetch(ticker)
             price_analysis = PriceAnalytics(prices)
-            print(price_analysis.summary())
+            summary = price_analysis.summary()
             curr_price = prices['Close'].iloc[-1]
             print(f"Current Market Price: ${curr_price:.2f}")
 
