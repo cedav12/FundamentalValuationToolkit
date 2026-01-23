@@ -38,7 +38,7 @@ def main(args: argparse.Namespace):
             )
         print("\nValuation Model (DCF)")
         try:
-            result = dcf.run_dcf(latest["revenue"], base_assumptions)
+            result = dcf.run_dcf(latest["rev"], base_assumptions)
             print(f"Scenario: {result['scenario']}")
             print(f"Estemated fair value per share: ${result['share_price']:.2f}")
             intr_val=result['share_price']
