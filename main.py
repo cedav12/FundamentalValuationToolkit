@@ -26,7 +26,7 @@ def main(args: argparse.Namespace):
             print(metrics[["Revenue", "NOPAT", "ROIC", "FCF"]].tail(5))
             latest = processor.get_latest_data()
             base_assumptions = DCFAssumptions(
-                name: "Base Case",
+                name= "Base Case",
                 gr_next5y=0.05,
                 operating_margin_target=0.20,
                 tax_rate=0.21,
