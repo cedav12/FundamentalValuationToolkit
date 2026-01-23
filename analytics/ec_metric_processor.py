@@ -37,7 +37,34 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
         except Exception as e:
             print(e)
             return None
-        
+
+    def get_latest_data(self) -> dict
+        if self._output is None:
+            self.get_metrics()
+
+        if self._output is None or self._output.empty:
+            return{}
+
+        latest_metrics = self._output.iloc[-1]
+        bs = self._data.statements["balance_sheet"]
+        if not bs.empty:
+            latest_bs = bs.iloc[:,0]
+            total_debt = latest_bs.get("Total Debt", 0)
+            if pd.isna(total_debt):
+                total_debt = latest_bs.get("Total Debt", 0)
+            cash = latest_bs.get("Cash And Cash Equivalents", 0)
+            net_debt = total_debt - cash
+        else:
+            net_debt = 0
+    
+        return{
+            "rev": latest_metrics.get("Revenue", 0),
+            "nopat": latest_metrics.get("NOPAT", 0),
+            "roic": latest_metrics.get("ROIC", 0),
+            "net_debt": net_debt,
+            "shares": self._data.info.get("sharesOutstanding", 1)
+        }
+            
     # Processes financial statements  (Private method)
     def _process_metrics(self) -> pd.DataFrame:
         dfs = []
@@ -60,9 +87,7 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
             ebit = full_df.get("Operating Income", 0)
         
         tax_provision = full_df.get("Tax Provision", 0)
-        pretax_income = full_df.get("Pretax Income", 1)
         
-        effective_tax_rate = (tax_provision/pretax_income).clip(0, 0.4)
         economic_df["NOPAT"] = ebit - tax_provision
 
         # Invested Capital = Operating Working Cash + Net Fixed Assets
@@ -73,8 +98,9 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
 
         op_work_cap = (cur_assets - cash) - cur_lia
 
-        net_ppe = full_df.get("Net PPE", 0)
-        if "Net PPE" not in full_df.columns:
+        if "Net PPE" in full_df.columns:
+            net_ppe = full_df.get("Net PPE")
+        else:
             net_ppe = full_df.get("Gross PPE", 0) - full_df.get("Accumulated Depreciation", 0)
 
         other_assets = full_df.get("Total Non Current Assets", 0) - net_ppe
