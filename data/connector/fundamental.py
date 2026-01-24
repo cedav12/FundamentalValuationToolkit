@@ -1,9 +1,7 @@
 import yfinance as yf
-import pandas as pd
 import time
 
 from .base import BaseConnector
-from typing import Dict
 
 from ..models.fundamental_data import FundamentalData
 
