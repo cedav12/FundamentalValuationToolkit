@@ -77,3 +77,34 @@ class DCFModel:
             "terminal_value": terminal_val
         }
 
+    # Calculates share price for a matrix of WACC x terminal growth rates, and returns a dataframe for pricing.
+    def run_sensitivity_analysis(current_rev: float, base_assumptions: DCFAssumptions) -> pd.DataFrame:
+        wacc_range = [base_assumptions.wacc - 0.01, base_assumptions.wacc, base_assumptions.wacc + 0.01]
+        growth_range= [base_assumptions.terminal_gr - 0.01, base_assumptions.terminal_gr, base_assumptions.terminal_gr + 0.01]
+        results = {}
+
+        temp_assumptions = DCFAssumptions(
+            name = base_assumptions.name,
+            gr_next5y = base_assumptions.gr_next5y,
+            op_margin_target=base_assumptions.op_margin_target,
+            tax_rate = base_assumptions.tax_rate,
+            roic_target= base_assumptions.roic_target,
+            wacc= base_assumptions.wacc,
+            terminal_gr = base_assumptions.terminal_gr,
+            shares_outst = base_assumptions.shares_outst,
+            net_debt = base_assumptions.net_debt
+        )
+
+        for g in growth_range:
+            low_results = []
+            for w in wacc_range:
+                temp_assumptions.wacc = w
+                temp_assumptions.terminal_gr = g
+                res = DCFModel.run_dcf(current_rev,temp_assumptions)
+                row_results.append(round(res["share_price"], 2))
+            results[f"Terminal Growth {g:.1%}"] = row_results
+
+        df= pd.DataFrame(results, index=[f"WACC {w:.1%}" for w in wacc_range])
+        return df
+            
+        
