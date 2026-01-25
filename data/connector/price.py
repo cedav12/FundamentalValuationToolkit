@@ -27,8 +27,8 @@ class YahooPriceConnector(BaseConnector):
 
         if data.empty:
             raise ValueError(f"No price data returned for {ticker}")
-        # Remove multicolumn index with simple index
-        data.columns = [c[0] for c in data.columns]
+        if isinstance(data.columns, pd.MultiIndex):
+            data.columns = [c[0] for c in data.columns]
         data.reset_index(inplace=True)
         data["Ticker"] = ticker.upper()
 
