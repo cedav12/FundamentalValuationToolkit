@@ -144,6 +144,9 @@ class AnalysisPipeline:
                 Plotter.plot_price_vs_dcf(prices, intr_val, logger.log_dir, ticker, self.show_plt)
             except Exception as e:
                 logger.log(f"DCF analysis failed: {e}")
+            logger.subsection("Sensitivity Analysis")
+            sensitivity_df = self.dcf_model.run_sensitivity_analysis(latest["rev"], base_assumptions)
+            logger.log(sensitivity_df)
     # =====================================================
     # DCF Assumption Resolution
     # =====================================================
