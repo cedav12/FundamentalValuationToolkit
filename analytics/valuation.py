@@ -1,4 +1,4 @@
-import pandas as pd
+ingimport pandas as pd
 import numpy as np
 from dataclasses import dataclass
 
@@ -85,7 +85,7 @@ class DCFModel:
         temp_assumptions = DCFAssumptions(
             name = base_assumptions.name,
             gr_next5y = base_assumptions.gr_next5y,
-            op_margin_target=base_assumptions.op_margin_target,
+            operating_margin_target=base_assumptions.operating_margin_target,
             tax_rate = base_assumptions.tax_rate,
             roic_target= base_assumptions.roic_target,
             wacc= base_assumptions.wacc,
@@ -107,6 +107,7 @@ class DCFModel:
         return df
             
         
+
 
 
 
