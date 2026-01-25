@@ -10,13 +10,15 @@ from analytics.ec_metric_processor import FundamentalProcessor
 from analytics.price_analytics import PriceAnalytics
 from analytics.valuation import DCFModel, DCFAssumptions
 from data.models.fundamental_data import FundamentalData
+from data.plotter import Plotter
 
 
 class AnalysisPipeline:
     """
     Orchestrates full equity analysis in small, testable steps.
     """
-    def __init__(self, output_path: str | None = None):
+    def __init__(self, output_path: str | None = None, show_plt: bool = False):
+        self.show_plt = show_plt
         self.output_path = output_path
 
         # Shared services
@@ -32,7 +34,8 @@ class AnalysisPipeline:
         for ticker in tickers:
             self._analyze_ticker(ticker.upper())
         print("\nANALYSIS FINISHED.")
-        print(f"Reports saved in: ./{self.output_path}/")
+        if self.output_path is not None:
+            print(f"Reports saved in: ./{self.output_path}/")
 
     # =====================================================
     # Per-ticker pipeline
@@ -52,9 +55,7 @@ class AnalysisPipeline:
     # Setup
     # =====================================================
     def _create_logger(self, ticker: str) -> Logger:
-
-        path = os.path.join(self.output_path, f"{ticker}.txt")
-
+        path = os.path.join(self.output_path, ticker, f"{ticker}_report.txt") if self.output_path else None
         return Logger(path)
 
     @staticmethod
@@ -74,6 +75,8 @@ class AnalysisPipeline:
             analysis = PriceAnalytics(prices)
             summary = analysis.summary()
             logger.log(summary)
+            # Price MA plot
+            Plotter.plot_price_ma(prices, logger.log_dir, ticker, self.show_plt)
             return prices
 
         except Exception as e:
@@ -109,6 +112,12 @@ class AnalysisPipeline:
                 logger.log(f"Current Market Price: ${curr_price:.2f}")
                 upside = (intr_val - curr_price) / curr_price
                 logger.log(f"Implied Upside: {upside:.1%}")
+                # Revenue / FCF plot
+                Plotter.plot_revenue_fcf(metrics, logger.log_dir, ticker, self.show_plt)
+                # ROIC vs WACC
+                Plotter.plot_roic_vs_wacc(metrics, base_assumptions.wacc, logger.log_dir, ticker, self.show_plt)
+                # Price vs DCF (after DCF calculated)
+                Plotter.plot_price_vs_dcf(prices, intr_val, logger.log_dir, ticker, self.show_plt)
             except Exception as e:
                 logger.log(f"DCF analysis failed: {e}")
 

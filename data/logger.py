@@ -9,13 +9,14 @@ class Logger:
 
     def __init__(self, filename: str | None = None):
         self.terminal = sys.stdout
+        self.log_dir = None
 
         if filename:
             # Create directory if needed
-            log_dir = os.path.dirname(filename)
+            self.log_dir = os.path.dirname(filename)
 
-            if log_dir and not os.path.exists(log_dir):
-                os.makedirs(log_dir, exist_ok=True)
+            if self.log_dir and not os.path.exists(self.log_dir):
+                os.makedirs(self.log_dir, exist_ok=True)
             self.logger = open(filename, "w", encoding="utf-8")
         else:
             self.logger = None

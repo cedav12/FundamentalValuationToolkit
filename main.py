@@ -6,9 +6,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--tickers", nargs="+", type=str, required=True, help="list of tickers to be analyzed")
 parser.add_argument("--output_path", default="output_reports", type=str,
                     help="Specify path, where output will be saved. If None, no output will be saved")
+parser.add_argument( "--show_plt", action="store_true",
+                     help="If set, display plots interactively. Otherwise, just save to output_path.")
 
 def main(args: argparse.Namespace):
-    pipeline = AnalysisPipeline(args.output_path)
+    pipeline = AnalysisPipeline(args.output_path, args.show_plt)
     pipeline.run(args.tickers)
 
 
