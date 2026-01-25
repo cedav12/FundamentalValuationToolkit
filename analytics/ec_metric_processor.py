@@ -7,14 +7,6 @@ from data.models.fundamental_data import FundamentalData
 
 class FundamentalProcessor:  # Raw financial statement conversion to econ. metrics using the McKinsey Valuation framework (Valuation - measuring and managing the value of companies 8th ed.)
     def __init__(self, data: FundamentalData, logger: Logger | None = None):
-        """
-       Parameters
-       ----------
-       data : FundamentalData
-           Data containing info about instrument and potentially financial statements
-       logger : Logger | None, optional
-           message logger
-       """
         self.logger = logger
         self._data = data
         self._output: pd.DataFrame | None = None
@@ -22,15 +14,15 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
 
     def get_metrics(self) -> pd.DataFrame | None:
         """
-        Run FundamentalProcessor.
-        Returns metrics DataFrame if successful, else None.
+        Runs conversion pipeline and returns metrics dataframe
         """
+        # Validates that company is an equity
         if self._data.quote_type != "EQUITY":
             if self.logger:
                 self.logger.log(f"{self._data.ticker}: QuoteType={self._data.quote_type} Not Supported."
                       f" FundamentalProcessor only supports EQUITIES.")
             return None
-
+        # If available, returns cached result
         if self._output is not None:
             return self._output.copy()
 
@@ -43,6 +35,9 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
             return None
 
     def get_latest_data(self) -> dict:
+        """
+        Extracts latest data for DCF model
+        """
         if self._output is None:
             self.get_metrics()
 
@@ -50,6 +45,7 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
             return{}
 
         latest_metrics = self._output.iloc[-1]
+        # Calculates Net Debt (Total Debt - Cash) 
         bs = self._data.statements["balance_sheet"]
         if not bs.empty:
             latest_bs = bs.iloc[:,0]
@@ -71,6 +67,7 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
             
     # Processes financial statements  (Private method)
     def _process_metrics(self) -> pd.DataFrame:
+        # Merge financial statements (dates to rows)
         dfs = []
         for key, df in self._data.statements.items():
             if not df.empty:
