@@ -44,6 +44,7 @@ To change the defaults, edit config.json in the root directory:
 }
 ```
 The user may then proceed to run the project via the command line.
+
 **Basic run**
 ```
 python main.py --tickers KO PLTR NVDA
