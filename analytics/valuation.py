@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 
-# Class for holding scenario assumptions
+# Holds key inputs
 class DCFAssumptions:
     name: str
     gr_next5y: float
@@ -16,7 +16,6 @@ class DCFAssumptions:
     shares_outst: float
     net_debt: float
 
-# Performs DCF valuation
 class DCFModel:
 
     # Projects FCF for upcoming 5y - calculates terminal value, returns share price and detailed projections
@@ -27,7 +26,8 @@ class DCFModel:
         prev_rev = current_rev
 
         for year in years:
-            rev = prev_rev*(1 + assumptions.gr_next5y) # revenue growth
+            # Operating performance
+            rev = prev_rev*(1 + assumptions.gr_next5y)
             ebit = rev * assumptions.operating_margin_target
             nopat = ebit * (1 - assumptions.tax_rate)
 
@@ -41,6 +41,7 @@ class DCFModel:
             
             fcf = nopat - investment
 
+            # Discount to present value
             discount_factor = (1 + assumptions.wacc) ** year
             pv_fcf = fcf/discount_factor
 
@@ -58,14 +59,10 @@ class DCFModel:
         terminal_val = terminal_fcf / max(assumptions.wacc - assumptions.terminal_gr, 0.001)
         pv_terminal_val = terminal_val/ ((1 + assumptions.wacc)**5)
 
-        # Total Enterprise Value
+        # Equity value per share
         sum_pv_fcf = projections["PV_FCF"].sum()
         enterprise_val = sum_pv_fcf + pv_terminal_val
-
-        # Equity Value
         equity_val = enterprise_val - assumptions.net_debt
-
-        #Price per share
         share_price = equity_val/ (assumptions.shares_outst if assumptions.shares_outst > 0 else 1)
 
         return {
@@ -83,6 +80,7 @@ class DCFModel:
         growth_range= [base_assumptions.terminal_gr - 0.01, base_assumptions.terminal_gr, base_assumptions.terminal_gr + 0.01]
         results = {}
 
+        # Clones assumptions to avoid changing the original
         temp_assumptions = DCFAssumptions(
             name = base_assumptions.name,
             gr_next5y = base_assumptions.gr_next5y,
@@ -108,5 +106,6 @@ class DCFModel:
         return df
             
         
+
 
 
