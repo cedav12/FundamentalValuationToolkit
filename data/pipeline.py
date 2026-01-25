@@ -27,7 +27,7 @@ class AnalysisPipeline:
         self.fundamental_connector = YahooFundamentalsConnector()
         self.dcf_model = DCFModel()
 
-    def load_config(self, path: str) -> dict:
+    def _load_config(self, path: str) -> dict:
         try:
             with open(path, "r") as f:
                 return json.load(f)
