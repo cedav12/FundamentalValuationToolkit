@@ -29,11 +29,16 @@ class Plotter:
         """
         Plots closing price + 50 & 200-day moving averages
         """
+        if "Date" in prices.columns:
+            plot_data = prices.set_index("Date")
+        else:
+            plot_data = prices
+        
         fig, ax = plt.subplots(figsize=(10, 5))
 
-        ax.plot(prices.index, prices["Close"], label="Close Price", color="blue")
-        ax.plot(prices["Close"].rolling(50).mean(), label="MA 50", color="orange")
-        ax.plot(prices["Close"].rolling(200).mean(), label="MA 200", color="green")
+        ax.plot(plot_data.index, plot_data["Close"], label="Close Price", color="blue")
+        ax.plot(plot_data["Close"].rolling(50).mean(), label="MA 50", color="orange")
+        ax.plot(plot_data["Close"].rolling(200).mean(), label="MA 200", color="green")
 
         ax.set_title(f"{ticker} Price Trend")
         ax.set_xlabel("Date")
@@ -49,9 +54,13 @@ class Plotter:
     @staticmethod
     def plot_price_vs_dcf(prices: pd.DataFrame, dcf_value: float, output_path: str | None, ticker: str,
                           show: bool = False):
+        if "Date" in prices.columns:
+            plot_data = prices.set_index("Date")
+        else:
+            plot_data = prices
         fig, ax = plt.subplots(figsize=(10, 5))
 
-        ax.plot(prices.index, prices["Close"], label="Market Price", color="blue")
+        ax.plot(plot_data.index, plot_data["Close"], label="Market Price", color="blue")
         ax.axhline(y=dcf_value, color="red", linestyle="--", label="DCF Value")
 
         ax.set_title(f"{ticker} Market Price vs DCF")
