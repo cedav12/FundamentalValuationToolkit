@@ -96,7 +96,7 @@ class DCFModel:
         )
 
         for g in growth_range:
-            low_results = []
+            row_results = []
             for w in wacc_range:
                 temp_assumptions.wacc = w
                 temp_assumptions.terminal_gr = g
@@ -108,3 +108,4 @@ class DCFModel:
         return df
             
         
+
