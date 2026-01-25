@@ -1,5 +1,6 @@
 import os
 import datetime
+import json
 
 import pandas as pd
 
@@ -17,14 +18,22 @@ class AnalysisPipeline:
     """
     Orchestrates full equity analysis in small, testable steps.
     """
-    def __init__(self, output_path: str | None = None, show_plt: bool = False):
+    def __init__(self, output_path: str | None = None, show_plt: bool = False, config_path: str="config.json"):
         self.show_plt = show_plt
         self.output_path = output_path
-
+        self.config = self._load_config(config_path)
         # Shared services
         self.price_connector = YahooPriceConnector()
         self.fundamental_connector = YahooFundamentalsConnector()
         self.dcf_model = DCFModel()
+
+    def load_config(self, path: str) -> dict:
+        try:
+            with open(path, "r") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(f"{path} not found. Using defaults.")
+            return {}
 
     # =====================================================
     # Public API
@@ -122,15 +131,16 @@ class AnalysisPipeline:
                 logger.log(f"DCF analysis failed: {e}")
 
     def _build_dcf_assumptions(self, latest: dict) -> DCFAssumptions:
-
+        dcf_cfg = self.config.get("dcf",{})
+        
         return DCFAssumptions(
             name="Base Case",
-            gr_next5y=0.05,
-            operating_margin_target=0.20,
-            tax_rate=0.21,  # 21% - https://en.wikipedia.org/wiki/Corporate_tax_in_the_United_States
+            gr_next5y=dcf_cfg.get("revenue_growth_5y", 0.05),
+            operating_margin_target=dcf_cfg.get("operating_margin_target", 0.20),
+            tax_rate=dcf_cfg.get("tax_rate", 0.21),  # 21% - https://en.wikipedia.org/wiki/Corporate_tax_in_the_United_States
+            wacc=dcf_cfg.get("wacc", 0.08),
+            terminal_gr=dcf_cfg.get("terminal_growth", 0.03),
             roic_target=latest["roic"],
-            wacc=0.08,
-            terminal_gr=0.03,
             shares_outst=latest["shares"],
             net_debt=latest["net_debt"],
         )
