@@ -12,7 +12,7 @@ Our project is a comprehensive financial research engine designed to automate th
 1. **Clone repository**
 ```
 git clone <https://github.com/cedav12/FundamentalValuationToolkit.git>
-cd EquityVal
+cd FundamentalValuationToolkit-main
 ```
 2. **Install dependencies**
 ```
