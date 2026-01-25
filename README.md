@@ -19,8 +19,23 @@ cd EquityVal
 pip install -r requirements.txt
 ```
 
-## User manual
-Run the project via the command line.
+## Usage manual
+
+**Configuration**
+
+The project uses a config.json file for users to be able to change the assumptions. What can be modified are the default growth rates, margins, and discount rates (WACC). This is done by editing this file in the root directory:
+```
+{
+    "dcf": {
+        "revenue_growth_5y": 0.05,
+        "operating_margin_target": 0.20,
+        "tax_rate": 0.21,
+        "wacc": 0.08,
+        "terminal_growth": 0.03
+    }
+}
+```
+The user may then proceedto run the project via the command line.
 **Basic run**
 ```
 python main.py --tickers KO PLTR NVDA
