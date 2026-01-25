@@ -146,6 +146,7 @@ class AnalysisPipeline:
                 logger.log(f"DCF analysis failed: {e}")
 
     def _resolve_dcf_config(self, sector: str) -> dict:
+        # Load base results
         base = self.config.get("dcf", {
             "revenue_growth_5y": 0.05,
             "operating_margin_target": 0.20,
@@ -153,7 +154,7 @@ class AnalysisPipeline:
             "wacc": 0.08,
             "terminal_growth": 0.03
         }).copy()
-
+        # Use specific sector assumptions
         sector_map = {
             "Technology": {"revenue_growth_5y": 0.15, "operating_margin_target": 0.30, "wacc": 0.10},
             "Consumer Defensive": {"revenue_growth_5y": 0.04, "operating_margin_target": 0.20, "wacc": 0.065},
@@ -162,6 +163,6 @@ class AnalysisPipeline:
         }   
         if sector in sector_map:
             base.update(sector_map[sector])
-        base.update(self.overrides)
+        base.update(self.overrides) # Use config.json overides
         
         return base
