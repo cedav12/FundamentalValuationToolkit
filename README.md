@@ -52,8 +52,11 @@ python main.py --tickers NVDA --output_path ./my_research
 ## Methodology
 ### 1. Economic metrics
 Net income is often not the best metric to count a company's true performance due to non-cash items and leverage. We calculate Economic Profit:
+
 $$\text{ROIC} = \frac{\text{NOPAT}}{\text{Invested Capital}}$$
+
 If ROIC > WACC, the company is creating value.
 ### 2. Valuation
 We use a 5-year DCF model:
+
 $$\text{Enterprise Value} = \sum_{t=1}^{5} \frac{\text{FCF}_t}{(1+WACC)^t} + \frac{\text{Terminal Value}}{(1+WACC)^5}$$
