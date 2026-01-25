@@ -1,8 +1,8 @@
 # Fundamental Valuation Toolkit
-EquityVal is a comprehensive financial research engine designed to facilitate an automated transition from raw accounting data into actionable investment insights. The application of the **McKinsey Valuation Framework** allows raw financial statements to be translated into economic metrics (specifically **NOPAT** and **Invested Capital**) to calculate **Return on Invested Capital** ("ROIC"). This data powers an enhanced 5-year ****Discounted Cash Flow** ("DCF") model with embedded risk analytics, all orchestrated through an automated, object-oriented pipeline.
+Our project is a comprehensive financial research engine designed to automate the transition from raw accounting data into actionable investment insights. We use the **McKinsey Valuation Framework**, where raw financial statements are translated into economic metrics (specifically **NOPAT** and **Invested Capital**) to calculate **Return on Invested Capital** ("ROIC"). This data is used to calculate an enhanced 5-year ****Discounted Cash Flow** ("DCF") model with embedded risk analytics, all orchestrated through an automated, object-oriented pipeline.
 
 ## Features
-* **McKinsey Framework Implementation:** Automatically converts standard balance sheet and income statement items into **Invested Capital** and **NOPAT** (Net Operating Profit Less Adjusted Taxes) to calculate **ROIC** (Return on Invested Capital).
+* **McKinsey Framework Implementation:** Automatically converts standard balance sheet and income statement items into **Invested Capital** and **NOPAT** (Net Operating Profit less Adjusted Taxes) to calculate **ROIC** (Return on invested capital).
 * **Automated DCF Valuation:** Projects Free Cash Flow for 5 years and calculates terminal value to find an intrinsic value per share.
 * **Risk Analytics:** Returns annualized volatility, Sharpe Ratio, Sortino Ratio, Maximum Drawdown, and Value at Risk (CVaR).
 * **Modular Pipeline:** A clear process separating data fetching, processing, and visualization.
