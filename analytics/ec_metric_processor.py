@@ -6,7 +6,7 @@ from data.models.fundamental_data import FundamentalData
 
 
 class FundamentalProcessor:  # Raw financial statement conversion to econ. metrics using the McKinsey Valuation framework (Valuation - measuring and managing the value of companies 8th ed.)
-    def __init__(self, data: FundamentalData, logger: Logger | None = None,  tax_rate: float = 0.21): # 21% - https://en.wikipedia.org/wiki/Corporate_tax_in_the_United_States
+    def __init__(self, data: FundamentalData, logger: Logger | None = None):
         """
        Parameters
        ----------
@@ -14,12 +14,9 @@ class FundamentalProcessor:  # Raw financial statement conversion to econ. metri
            Data containing info about instrument and potentially financial statements
        logger : Logger | None, optional
            message logger
-       tax_rate : float, optional
-           Used corporate tax_rate
        """
         self.logger = logger
         self._data = data
-        self._tax_rate = tax_rate
         self._output: pd.DataFrame | None = None
         self.quote_type = "EQUITY"
 

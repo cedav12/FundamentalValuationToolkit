@@ -20,7 +20,8 @@ class DCFAssumptions:
 class DCFModel:
 
     # Projects FCF for upcoming 5y - calculates terminal value, returns share price and detailed projections
-    def run_dcf(self, current_rev: float, assumptions: DCFAssumptions) -> dict:
+    @staticmethod
+    def run_dcf(current_rev: float, assumptions: DCFAssumptions) -> dict:
         years = range(1, 6)  # forcast dataframe setup
         projections = pd.DataFrame(index=years, columns=["Revenue","EBIT","NOPAT","Reinvestment","FCF","PV_FCF"])
         prev_rev = current_rev

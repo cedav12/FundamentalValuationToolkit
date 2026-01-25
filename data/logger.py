@@ -1,5 +1,6 @@
 import sys
 import os
+import datetime
 
 class Logger:
     """
@@ -31,6 +32,15 @@ class Logger:
 
         # Flush immediately
         self.flush()
+
+    def subsection(self, title: str):
+        line = "=" * len(title)
+        self.log(f"\n{title}\n{line}\n")
+
+    def section(self, title: str):
+        line = "=" * len(title)
+        self.log(f"\n{line}\n{title}\n{line}\n")
+
 
     def flush(self):
         self.terminal.flush()
