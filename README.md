@@ -25,22 +25,25 @@ pip install -r requirements.txt
 **Configuration**
 The project uses a cascading configuration system:
 
-CLI overrides (Highest priority - manually specified assumptions)
+* CLI overrides (Highest priority - manually specified assumptions)
 
-Sector detection (Middle priority - adjusts based on industry)
+* Sector detection (Middle priority - adjusts based on industry)
 
-Config.json (Lowest priority - defaults)
+* Config.json (Lowest priority - defaults)
 
 To change the defaults, edit config.json in the root directory:
 ```
 {
-    "dcf": {
-        "revenue_growth_5y": 0.05,
-        "operating_margin_target": 0.20,
-        "tax_rate": 0.21,
-        "wacc": 0.08,
-        "terminal_growth": 0.03
-    }
+  "dcf":{
+    "revenue_growth_5y": 0.05,
+    "operating_margin_target": 0.20,
+    "tax_rate": 0.21,
+    "wacc": 0.08,
+    "terminal_growth": 0.03
+  },
+  "market":{
+    "risk_free_rate": 0.04
+  }
 }
 ```
 The user may then proceed to run the project via the command line.
