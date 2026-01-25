@@ -144,7 +144,9 @@ class AnalysisPipeline:
                 Plotter.plot_price_vs_dcf(prices, intr_val, logger.log_dir, ticker, self.show_plt)
             except Exception as e:
                 logger.log(f"DCF analysis failed: {e}")
-
+    # =====================================================
+    # DCF Assumption Resolution
+    # =====================================================
     def _resolve_dcf_config(self, sector: str) -> dict:
         # Load base results
         base = self.config.get("dcf", {
