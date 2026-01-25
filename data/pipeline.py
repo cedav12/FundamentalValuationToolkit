@@ -18,10 +18,11 @@ class AnalysisPipeline:
     """
     Orchestrates full equity analysis in small, testable steps.
     """
-    def __init__(self, output_path: str | None = None, show_plt: bool = False, config_path: str="config.json"):
+    def __init__(self, output_path: str | None = None, show_plt: bool = False, config_path: str="config.json", overrides: dict = None):
         self.show_plt = show_plt
         self.output_path = output_path
         self.config = self._load_config(config_path)
+        self.overrides = overrides or {}
         # Shared services
         self.price_connector = YahooPriceConnector()
         self.fundamental_connector = YahooFundamentalsConnector()
@@ -103,15 +104,29 @@ class AnalysisPipeline:
         ticker: str
     ) -> None:
         logger.subsection("\nFundamental Analysis:")
-        fundementals: FundamentalData = self.fundamental_connector.fetch(ticker)
-        processor = FundamentalProcessor(fundementals, logger)
+        fundamentals: FundamentalData = self.fundamental_connector.fetch(ticker)
+        processor = FundamentalProcessor(fundamentals, logger)
         metrics = processor.get_metrics()
         if metrics is not None:
             logger.subsection(f"Key Metrics for {ticker} (Last 5 years)")
             logger.log(metrics[["Revenue", "NOPAT", "ROIC", "FCF"]].tail(5))
             latest = processor.get_latest_data()
-            base_assumptions = self._build_dcf_assumptions(latest)
+            sector = fundamentals.info.get("sector", "Unknown")
+            final_dcf_cfg = self._resolve_dcf_config(sector)
             logger.subsection("\nValuation Model (DCF)")
+            logger.log(f"Sector Detected: {sector}")
+            logger.log(f"Assumptions Used: Growth={final_dcf_cfg['revenue_growth_5y']:.1%}, WACC={final_dcf_cfg['wacc']:.1%}, Margin={final_dcf_cfg['operating_margin_target']:.1%}")
+            base_assumptions = DCFAssumptions(
+                name=f"Sector: {sector} + Overrides",
+                gr_next5y=final_dcf_cfg["revenue_growth_5y"],
+                operating_margin_target=final_dcf_cfg["operating_margin_target"],
+                tax_rate=final_dcf_cfg["tax_rate"],
+                wacc=final_dcf_cfg["wacc"],
+                terminal_gr=final_dcf_cfg["terminal_growth"],
+                roic_target=latest["roic"],
+                shares_outst=latest["shares"],
+                net_debt=latest["net_debt"],
+            )
             try:
                 result = self.dcf_model.run_dcf(latest["rev"], base_assumptions)
                 logger.log(f"Scenario: {result['scenario']}")
@@ -130,17 +145,23 @@ class AnalysisPipeline:
             except Exception as e:
                 logger.log(f"DCF analysis failed: {e}")
 
-    def _build_dcf_assumptions(self, latest: dict) -> DCFAssumptions:
-        dcf_cfg = self.config.get("dcf",{})
+    def _resolve_dcf_config(self, sector: str) -> dict:
+        base = self.config.get("dcf", {
+            "revenue_growth_5y": 0.05,
+            "operating_margin_target": 0.20,
+            "tax_rate": 0.21,
+            "wacc": 0.08,
+            "terminal_growth": 0.03
+        }).copy()
+
+        sector_map = {
+            "Technology": {"revenue_growth_5y": 0.15, "operating_margin_target": 0.30, "wacc": 0.10},
+            "Consumer Defensive": {"revenue_growth_5y": 0.04, "operating_margin_target": 0.20, "wacc": 0.065},
+            "Healthcare": {"revenue_growth_5y": 0.06, "operating_margin_target": 0.25, "wacc": 0.08},
+            "Energy": {"revenue_growth_5y": 0.03, "operating_margin_target": 0.15, "wacc": 0.09},
+        }   
+        if sector in sector_map:
+            base.update(sector_map[sector])
+        base.update(self.overrides)
         
-        return DCFAssumptions(
-            name="Base Case",
-            gr_next5y=dcf_cfg.get("revenue_growth_5y", 0.05),
-            operating_margin_target=dcf_cfg.get("operating_margin_target", 0.20),
-            tax_rate=dcf_cfg.get("tax_rate", 0.21),  # 21% - https://en.wikipedia.org/wiki/Corporate_tax_in_the_United_States
-            wacc=dcf_cfg.get("wacc", 0.08),
-            terminal_gr=dcf_cfg.get("terminal_growth", 0.03),
-            roic_target=latest["roic"],
-            shares_outst=latest["shares"],
-            net_debt=latest["net_debt"],
-        )
+        return base
