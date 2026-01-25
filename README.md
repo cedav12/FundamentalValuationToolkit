@@ -4,6 +4,7 @@ Our project is a comprehensive financial research engine designed to automate th
 ## Features
 * **McKinsey Framework Implementation:** Automatically converts standard balance sheet and income statement items into **Invested Capital** and **NOPAT** (Net Operating Profit less Adjusted Taxes) to calculate **ROIC** (Return on invested capital).
 * **Automated DCF Valuation:** Projects Free Cash Flow for 5 years and calculates terminal value to find an intrinsic value per share.
+* **Smart Sector Detection:** Automatically detects the sector and applies appropriate growth and margin assumptions.
 * **Risk Analytics:** Returns annualized volatility, Sharpe Ratio, Sortino Ratio, Maximum Drawdown, and Value at Risk (CVaR).
 * **Modular Pipeline:** A clear process separating data fetching, processing, and visualization.
 * **Visualizations:** Automatically generates charts for price trends, ROIC vs. WACC, and Revenue/FCF trajectories.
@@ -22,8 +23,15 @@ pip install -r requirements.txt
 ## Usage manual
 
 **Configuration**
+The project uses a cascading configuration system:
 
-The project uses a config.json file for users to be able to change the assumptions. What can be modified are the default growth rates, margins, and discount rates (WACC). This is done by editing this file in the root directory:
+CLI overrides (Highest priority - manually specified assumptions)
+
+Sector detection (Middle priority - adjusts based on industry)
+
+Config.json (Lowest priority - defaults)
+
+To change the defaults, edit config.json in the root directory:
 ```
 {
     "dcf": {
@@ -35,10 +43,14 @@ The project uses a config.json file for users to be able to change the assumptio
     }
 }
 ```
-The user may then proceedto run the project via the command line.
+The user may then proceed to run the project via the command line.
 **Basic run**
 ```
 python main.py --tickers KO PLTR NVDA
+```
+**Run with manual overrides**
+```
+python main.py --tickers NVDA --growth 0.25 --wacc 0.09
 ```
 **Run with interactive plots**
 ```
