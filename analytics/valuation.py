@@ -75,6 +75,7 @@ class DCFModel:
         }
 
     # Calculates share price for a matrix of WACC x terminal growth rates (9 total), and returns a dataframe for pricing.
+    @staticmethod
     def run_sensitivity_analysis(current_rev: float, base_assumptions: DCFAssumptions) -> pd.DataFrame:
         wacc_range = [base_assumptions.wacc - 0.01, base_assumptions.wacc, base_assumptions.wacc + 0.01]
         growth_range= [base_assumptions.terminal_gr - 0.01, base_assumptions.terminal_gr, base_assumptions.terminal_gr + 0.01]
@@ -106,6 +107,7 @@ class DCFModel:
         return df
             
         
+
 
 
 
