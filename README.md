@@ -1,4 +1,6 @@
 # Fundamental Valuation Toolkit
+## David Černý, Simon Martinek
+
 Our project is a comprehensive financial research engine designed to automate the transition from raw accounting data into actionable investment insights. We use the **[McKinsey Valuation Framework](https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/valuation-measuring-and-managing-the-value-of-companies)**, where raw financial statements are translated into economic metrics (specifically **NOPAT** and **Invested Capital**) to calculate **Return on Invested Capital** ("ROIC"). This data is used to calculate an enhanced 5-year ****Discounted Cash Flow** ("DCF") model with embedded risk analytics, all orchestrated through an automated, object-oriented pipeline.
 
 ## Features
