@@ -9,8 +9,15 @@ parser.add_argument("--output_path", default="output_reports", type=str,
 parser.add_argument( "--show_plt", action="store_true",
                      help="If set, display plots interactively. Otherwise, just save to output_path.")
 
-def main(args: argparse.Namespace):
-    pipeline = AnalysisPipeline(args.output_path, args.show_plt)
+def main():
+    args = parser.parse_args()
+    overrides = {
+        "revenue_growth_5y": args.growth,
+        "operating_margin_target": args.margin,
+        "wacc": args.wacc,
+        "terminal_growth": args.terminal_growth        
+    }
+    pipeline = AnalysisPipeline(args.output_path, args.show_plt, overrides=overrides)
     pipeline.run(args.tickers)
 
 
