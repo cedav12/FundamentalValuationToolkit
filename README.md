@@ -25,11 +25,11 @@ pip install -r requirements.txt
 **Configuration**
 The project uses a cascading configuration system:
 
-* CLI overrides (Highest priority - manually specified assumptions)
+* config.json overrides (Highest priority - manually specified assumptions)
 
 * Sector detection (Middle priority - adjusts based on industry)
 
-* Config.json (Lowest priority - defaults)
+* config.json defaults (Lowest priority - default setting)
 
 To change the defaults, edit config.json in the root directory:
 ```
